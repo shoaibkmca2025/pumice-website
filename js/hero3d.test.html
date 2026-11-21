@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>hero3d self-check</title>
+<!-- Self-check for the animation timeline: open over http and read the result. -->
+<pre id="out">running…</pre>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import { stateAt } from './hero3d.js';
+const fails = [], ok = (c, m) => c || fails.push(m);
+const L = 16.4, H = 2.05;
+for (let t = -L; t < L * 4; t += 0.05) {
+  const s = stateAt(t);
+  ok(s.py >= -1e-9 && s.py <= H + 1e-9, `platform out of range at ${t}`);
+  const shown = s.cars.filter((c) => c.vis);
+  ok(new Set(s.cars.map((c) => c.car)).size === 4 && s.cars.every((c) => c.car >= 0 && c.car < 4), `bad car index at ${t}`);
+  // Never two visible cars in the same spot at the same height.
+  for (const a of shown) for (const b of shown) if (a !== b) ok(!(Math.abs(a.z - b.z) < 4 && Math.abs(a.y - b.y) < 1.5), `cars overlap at ${t.toFixed(2)}`);
+  // A car under the raised platform must fit below it.
+  for (const c of shown) if (!c.deck && Math.abs(c.z) < 2.5) ok(s.py > 1.6 || c.z > 2.4, `ground car under a lowered platform at ${t.toFixed(2)}`);
+}
+// Seamless loop: the end of one cycle matches the start of the next (same spots, same heights).
+const a = stateAt(L - 1e-6), b = stateAt(L + 1e-6);
+ok(Math.abs(a.py - b.py) < 1e-3, 'platform jumps at loop');
+const spot = (s) => s.cars.filter((c) => c.vis).map((c) => `${c.car}:${c.z.toFixed(2)}:${c.y.toFixed(2)}`).sort().join(' ');
+ok(spot(a) === spot(b), `cars jump at loop: ${spot(a)} vs ${spot(b)}`);
+document.getElementById('out').textContent = fails.length ? 'FAIL\n' + [...new Set(fails)].slice(0, 20).join('\n') : 'PASS';
+</script>
