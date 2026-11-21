@@ -6,7 +6,9 @@ A static, Apple-style rebuild of pumiceautoparking.com. Plain HTML, CSS and a li
 
 | File | Page |
 | --- | --- |
-| `index.html` | Home: full-screen split hero (tower parking photo), product tiles and a scrollable lineup of all 11 systems, animated stacker demo, "Why go vertical", "Built for", how we work with factory photos, installations, presence and stats |
+| `index.html` | Home: full-screen split hero with a live 3D stacker scene, product tiles and a scrollable lineup of all 11 systems, animated stacker demo, "Why go vertical", "Built for", how we work with factory photos, installations, presence and stats |
+| `js/hero3d.js` | The live 3D hero (three.js): a row of two-level hydraulic stackers in a basement, with the middle unit running the parking sequence on a loop |
+| `js/hero3d.test.html` | Self-check for the 3D animation timeline: open it over http and it shows PASS or the failures |
 | `systems.html` | "Which system fits?" chooser, all 11 parking systems with specs, shared specifications and a comparison table |
 | `about.html` | Company profile, factory, leadership (Prashant Patil), vision and mission |
 | `gallery.html` | Installation and factory photos, with a full-screen photo viewer |
@@ -16,9 +18,13 @@ A static, Apple-style rebuild of pumiceautoparking.com. Plain HTML, CSS and a li
 
 Each page carries its own CSS in the `<head>`, so every page loads in a single request plus its images. Images further down a page load only when the visitor scrolls to them. The shared part of that CSS, the header and the footer are the same on every page, so a change to them has to be made in all five files.
 
+### 3D hero
+
+The home hero shows `images/hero3d-*.webp`, a still render of the 3D scene, so it loads as fast as any photo. On desktop, the live scene (three.js 0.170.0 from the jsDelivr CDN, about 150 KB) loads on the visitor's first mouse move, scroll, tap or key press and fades in over the identical still. It then plays the stacker sequence and leans gently toward the pointer. Phones, data-saver mode, "reduce motion" and computers without graphics acceleration keep the still. The scene pauses when it is scrolled out of view or the tab is hidden. To preview the live scene on a machine without a GPU, add `?3d=force` to the address.
+
 The header follows the old site's menu: a top bar with e-mail support and phone, then Home, About Us (About Pumice, Our CEO), Our Products (all 11 systems), Gallery (Product Gallery, Factory Gallery) and Contact Us. On phones it becomes a full-screen menu with expandable groups.
 
-Lighthouse (mobile, throttled, served with gzip as on a normal host): Performance 96–100, Accessibility, Best Practices and SEO 100 on every page.
+Lighthouse (mobile, throttled, served with gzip as on a normal host): Performance 96–100, Accessibility, Best Practices and SEO 100 on every page. Home on desktop: 100 in all four.
 
 ## Put it online
 
